@@ -3,15 +3,21 @@ package quiz
 import (
 	"bufio"
 	"fmt"
-	"goQuiz/internal/api"
 	"goQuiz/internal/models"
+	"goQuiz/internal/storage"
 	"os"
 	"strconv"
 	"strings"
 )
 
+var quizStorage *storage.MemoryStorage
+
+func init() {
+	quizStorage = storage.NewMemoryStorage()
+}
+
 func FetchQuestions() ([]models.Question, error) {
-	return api.GetQuestions()
+	return quizStorage.GetQuiz().Questions, nil
 }
 
 func CollectUserAnswers(questions []models.Question) []models.UserAnswer {
@@ -51,7 +57,12 @@ func promptForAnswer(minOption, maxOption int) int {
 }
 
 func SubmitAnswers(answers []models.UserAnswer) (models.QuizResult, error) {
-	return api.SubmitAnswers(answers)
+	correctAnswers, err := quizStorage.SubmitAnswers(answers)
+	if err != nil {
+		return models.QuizResult{}, err
+	}
+
+	return quizStorage.CalculateResult(correctAnswers), nil
 }
 
 func DisplayResults(result models.QuizResult) {
