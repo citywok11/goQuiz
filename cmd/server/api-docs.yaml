@@ -1,0 +1,79 @@
+openapi: 3.0.0
+info:
+  title: GoQuiz API
+  description: API for the GoQuiz application
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /questions:
+    get:
+      summary: Get quiz questions
+      description: Retrieve the list of quiz questions
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+
+  /submit:
+    post:
+      summary: Submit quiz answers
+      description: Submit user answers for the quiz
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserAnswer'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizResult'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    Question:
+      type: object
+      properties:
+        id:
+          type: integer
+        text:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+    UserAnswer:
+      type: object
+      properties:
+        question_id:
+          type: integer
+        answer_index:
+          type: integer
+    QuizResult:
+      type: object
+      properties:
+        correct_answers:
+          type: integer
+        total_questions:
+          type: integer
+        percentile:
+          type: number
+          format: float
