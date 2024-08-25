@@ -27,19 +27,26 @@ func init() {
 }
 
 func runQuiz(cmd *cobra.Command, args []string) {
-	questions, err := quiz.FetchQuestions()
+	quizManager := quiz.NewQuizManager(
+		&quiz.DefaultQuestionFetcher{},
+		&quiz.DefaultAnswerCollector{},
+		&quiz.DefaultAnswerSubmitter{},
+		&quiz.DefaultResultDisplayer{},
+	)
+
+	questions, err := quizManager.FetchQuestions()
 	if err != nil {
 		fmt.Println("Error fetching questions:", err)
 		return
 	}
 
-	userAnswers := quiz.CollectUserAnswers(questions)
+	userAnswers := quizManager.CollectUserAnswers(questions)
 
-	result, err := quiz.SubmitAnswers(userAnswers)
+	result, err := quizManager.SubmitAnswers(userAnswers)
 	if err != nil {
 		fmt.Println("Error submitting answers:", err)
 		return
 	}
 
-	quiz.DisplayResults(result)
+	quizManager.DisplayResults(result)
 }

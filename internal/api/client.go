@@ -7,10 +7,25 @@ import (
 	"net/http"
 )
 
-const apiBaseURL = "http://localhost:8081"
+var BaseURL = "http://localhost:8081"
 
-func GetQuestions() ([]models.Question, error) {
-	resp, err := http.Get(apiBaseURL + "/questions")
+type Client struct {
+	BaseURL    string
+	HTTPClient *http.Client
+}
+
+func NewClient(baseURL string, httpClient *http.Client) *Client {
+	if httpClient == nil {
+		httpClient = http.DefaultClient
+	}
+	return &Client{
+		BaseURL:    baseURL,
+		HTTPClient: httpClient,
+	}
+}
+
+func (c *Client) GetQuestions() ([]models.Question, error) {
+	resp, err := c.HTTPClient.Get(c.BaseURL + "/questions")
 	if err != nil {
 		return nil, err
 	}
@@ -21,13 +36,13 @@ func GetQuestions() ([]models.Question, error) {
 	return questions, err
 }
 
-func SubmitAnswers(answers []models.UserAnswer) (models.QuizResult, error) {
+func (c *Client) SubmitAnswers(answers []models.UserAnswer) (models.QuizResult, error) {
 	data, err := json.Marshal(answers)
 	if err != nil {
 		return models.QuizResult{}, err
 	}
 
-	resp, err := http.Post(apiBaseURL+"/submit", "application/json", bytes.NewBuffer(data))
+	resp, err := c.HTTPClient.Post(c.BaseURL+"/submit", "application/json", bytes.NewBuffer(data))
 	if err != nil {
 		return models.QuizResult{}, err
 	}
@@ -36,4 +51,15 @@ func SubmitAnswers(answers []models.UserAnswer) (models.QuizResult, error) {
 	var result models.QuizResult
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	return result, err
+}
+
+// Compatibility functions for existing code
+func GetQuestions() ([]models.Question, error) {
+	client := NewClient(BaseURL, nil)
+	return client.GetQuestions()
+}
+
+func SubmitAnswers(answers []models.UserAnswer) (models.QuizResult, error) {
+	client := NewClient(BaseURL, nil)
+	return client.SubmitAnswers(answers)
 }
