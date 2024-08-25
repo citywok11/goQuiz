@@ -9,12 +9,17 @@ type QuizManager struct {
 	displayer ResultDisplayer
 }
 
-func NewQuizManager() *QuizManager {
+func NewQuizManager(
+	fetcher QuestionFetcher,
+	collector AnswerCollector,
+	submitter AnswerSubmitter,
+	displayer ResultDisplayer,
+) *QuizManager {
 	return &QuizManager{
-		fetcher:   defaultQuestionFetcher{},
-		collector: defaultAnswerCollector{},
-		submitter: defaultAnswerSubmitter{},
-		displayer: defaultResultDisplayer{},
+		fetcher:   fetcher,
+		collector: collector,
+		submitter: submitter,
+		displayer: displayer,
 	}
 }
 

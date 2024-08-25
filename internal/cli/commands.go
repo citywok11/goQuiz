@@ -27,7 +27,12 @@ func init() {
 }
 
 func runQuiz(cmd *cobra.Command, args []string) {
-	quizManager := quiz.NewQuizManager()
+	quizManager := quiz.NewQuizManager(
+		&quiz.DefaultQuestionFetcher{},
+		&quiz.DefaultAnswerCollector{},
+		&quiz.DefaultAnswerSubmitter{},
+		&quiz.DefaultResultDisplayer{},
+	)
 
 	questions, err := quizManager.FetchQuestions()
 	if err != nil {

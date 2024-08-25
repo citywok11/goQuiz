@@ -9,10 +9,10 @@ import (
 )
 
 type Server struct {
-	storage *storage.MemoryStorage
+	storage storage.QuizStorage
 }
 
-func NewServer(storage *storage.MemoryStorage) *Server {
+func NewServer(storage storage.QuizStorage) *Server {
 	return &Server{storage: storage}
 }
 

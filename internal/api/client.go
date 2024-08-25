@@ -14,10 +14,13 @@ type Client struct {
 	HTTPClient *http.Client
 }
 
-func NewClient() *Client {
+func NewClient(baseURL string, httpClient *http.Client) *Client {
+	if httpClient == nil {
+		httpClient = http.DefaultClient
+	}
 	return &Client{
-		BaseURL:    BaseURL,
-		HTTPClient: http.DefaultClient,
+		BaseURL:    baseURL,
+		HTTPClient: httpClient,
 	}
 }
 
@@ -52,11 +55,11 @@ func (c *Client) SubmitAnswers(answers []models.UserAnswer) (models.QuizResult, 
 
 // Compatibility functions for existing code
 func GetQuestions() ([]models.Question, error) {
-	client := NewClient()
+	client := NewClient(BaseURL, nil)
 	return client.GetQuestions()
 }
 
 func SubmitAnswers(answers []models.UserAnswer) (models.QuizResult, error) {
-	client := NewClient()
+	client := NewClient(BaseURL, nil)
 	return client.SubmitAnswers(answers)
 }
