@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"fmt"
 	"sync"
 
 	"goQuiz/internal/models"
@@ -55,13 +56,31 @@ func (m *MemoryStorage) SubmitAnswers(answers []models.UserAnswer) (models.QuizR
 		}
 	}
 
+	// Calculate percentile before adding the new result
+	var percentile float64
+	if len(m.results) > 0 {
+		betterScores := 0
+		for _, score := range m.results {
+			if score < correctAnswers {
+				betterScores++
+			}
+		}
+		percentile = float64(betterScores) / float64(len(m.results)) * 100
+	} else {
+		percentile = 100 // First submission is always in the 100th percentile
+	}
+
+	// Add the new result after calculating the percentile
 	m.results = append(m.results, correctAnswers)
 
-	percentile := float64(len(m.results)-1) / float64(len(m.results)) * 100
-
-	return models.QuizResult{
+	result := models.QuizResult{
 		CorrectAnswers: correctAnswers,
 		TotalQuestions: len(m.quiz.Questions),
 		Percentile:     percentile,
-	}, nil
+	}
+
+	fmt.Printf("Submitted answers. Correct: %d, Total: %d, Percentile: %.2f\n",
+		result.CorrectAnswers, result.TotalQuestions, result.Percentile)
+
+	return result, nil
 }
