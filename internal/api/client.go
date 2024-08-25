@@ -3,11 +3,17 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"goQuiz/internal"
 	"goQuiz/internal/models"
 	"net/http"
 )
 
-var BaseURL = "http://localhost:8080"
+var BaseURL string
+
+func init() {
+	cfg := internal.LoadConfig()
+	BaseURL = cfg.BaseURL
+}
 
 type Client struct {
 	BaseURL    string

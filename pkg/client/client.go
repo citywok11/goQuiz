@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"goQuiz/internal"
 	"goQuiz/internal/models"
 )
 
@@ -12,8 +13,9 @@ type Client struct {
 	BaseURL string
 }
 
-func NewClient(baseURL string) *Client {
-	return &Client{BaseURL: baseURL}
+func NewClient() *Client {
+	cfg := internal.LoadConfig()
+	return &Client{BaseURL: cfg.BaseURL}
 }
 
 func (c *Client) GetQuestions() ([]models.Question, error) {
