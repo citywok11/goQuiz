@@ -13,7 +13,7 @@ func setupServer(storage storage.QuizStorage) *http.Server {
 	server := api.NewServer(storage)
 	handler := server.SetupRoutes()
 	return &http.Server{
-		Addr:    ":8081",
+		Addr:    ":8080",
 		Handler: handler,
 	}
 }
@@ -22,6 +22,6 @@ func main() {
 	memoryStorage := storage.NewMemoryStorage()
 	server := setupServer(memoryStorage)
 
-	fmt.Println("Starting server on :8081")
+	fmt.Println("Starting server on :8080")
 	log.Fatal(server.ListenAndServe())
 }

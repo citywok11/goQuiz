@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-var BaseURL = "http://localhost:8081"
+var BaseURL = "http://localhost:8080"
 
 type Client struct {
 	BaseURL    string

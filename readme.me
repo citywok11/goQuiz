@@ -1,0 +1,59 @@
+# GoQuiz
+
+GoQuiz is a simple quiz application written in Go. It provides both a CLI and a server component for managing and taking quizzes.
+
+## Features
+
+- CLI interface for taking quizzes
+- Server component for hosting quizzes
+- RESTful API for fetching questions and submitting answers
+- In-memory storage for quiz data and results
+- Percentile calculation for quiz results
+
+## Project Structure
+
+The project is organized into several packages:
+
+- `cmd/cli`: Contains the main entry point for the CLI application
+- `cmd/server`: Contains the main entry point for the server application
+- `internal/api`: Handles API-related functionality
+- `internal/cli`: Manages CLI commands and interactions
+- `internal/models`: Defines data structures used throughout the application
+- `internal/quiz`: Implements core quiz logic and interfaces
+- `internal/storage`: Provides storage implementations for quiz data
+- `pkg/client`: Offers a client for interacting with the quiz API
+
+## Getting Started
+
+### Prerequisites
+
+- Go 1.23.0 or later
+
+### Running the CLI
+
+1. Navigate to the project root directory
+2. Run the following command:
+
+go run cmd/cli/main.go start
+
+### Running the Server
+
+1. Navigate to the project root directory
+2. Run the following command:
+
+go run cmd/server/main.go
+
+The server will start on `localhost:8080`.
+
+## API Endpoints
+
+- GET `/questions`: Fetch quiz questions
+- POST `/submit`: Submit quiz answers
+
+## Testing
+
+To run the tests, use the following command:
+
+go test ./...
+
+
