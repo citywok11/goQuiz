@@ -12,10 +12,19 @@ var rootCmd = &cobra.Command{
 	Short: "A simple quiz application",
 }
 
-var startCmd = &cobra.Command{
-	Use:   "start",
-	Short: "Start a new quiz",
-	Run:   runQuiz,
+func NewQuizCommand(
+	fetcher quiz.QuestionFetcher,
+	collector quiz.AnswerCollector,
+	submitter quiz.AnswerSubmitter,
+	displayer quiz.ResultDisplayer,
+) *cobra.Command {
+	return &cobra.Command{
+		Use:   "start",
+		Short: "Start a new quiz",
+		Run: func(cmd *cobra.Command, args []string) {
+			runQuiz(fetcher, collector, submitter, displayer)
+		},
+	}
 }
 
 func Execute() error {
@@ -23,16 +32,22 @@ func Execute() error {
 }
 
 func init() {
-	rootCmd.AddCommand(startCmd)
-}
-
-func runQuiz(cmd *cobra.Command, args []string) {
-	quizManager := quiz.NewQuizManager(
+	startCmd := NewQuizCommand(
 		&quiz.DefaultQuestionFetcher{},
 		&quiz.DefaultAnswerCollector{},
 		&quiz.DefaultAnswerSubmitter{},
 		&quiz.DefaultResultDisplayer{},
 	)
+	rootCmd.AddCommand(startCmd)
+}
+
+func runQuiz(
+	fetcher quiz.QuestionFetcher,
+	collector quiz.AnswerCollector,
+	submitter quiz.AnswerSubmitter,
+	displayer quiz.ResultDisplayer,
+) {
+	quizManager := quiz.NewQuizManager(fetcher, collector, submitter, displayer)
 
 	questions, err := quizManager.FetchQuestions()
 	if err != nil {

@@ -9,19 +9,20 @@ import (
 	"goQuiz/internal/storage"
 )
 
-func setupServer(storage storage.QuizStorage) *http.Server {
+func setupServer(storage storage.QuizStorage, serverAddr string) *http.Server {
 	server := api.NewServer(storage)
 	handler := server.SetupRoutes()
 	return &http.Server{
-		Addr:    ":8080",
+		Addr:    serverAddr,
 		Handler: handler,
 	}
 }
 
 func main() {
 	memoryStorage := storage.NewMemoryStorage()
-	server := setupServer(memoryStorage)
+	serverAddr := ":8080"
+	server := setupServer(memoryStorage, serverAddr)
 
-	fmt.Println("Starting server on :8080")
+	fmt.Printf("Starting server on %s\n", serverAddr)
 	log.Fatal(server.ListenAndServe())
 }
